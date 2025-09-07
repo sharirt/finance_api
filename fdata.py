@@ -1,12 +1,4 @@
-import pandas_datareader.data as web
 import pandas as pd
-import numpy as np
-import datetime as dt
-import yfinance as yf
-
-import pandas_datareader.data as web
-import pandas as pd
-import numpy as np
 import datetime as dt
 import yfinance as yf
 import requests
@@ -14,7 +6,21 @@ from io import StringIO
 
 def get_SP500(end_date=None, start_date=None, interval='1d'):
     """
-    
+    Fetch historical price data for all S&P 500 companies.
+
+    Parameters:
+    -----------
+    end_date : str, optional
+        Last date for data in 'YYYY-MM-DD' format (default: today).
+    start_date : str or pd.Timestamp, optional
+        First date for data (default: 5 years before end_date).
+    interval : str, optional
+        Data frequency, e.g., '1d', '1wk', '1mo' (default: '1d').
+
+    Returns:
+    --------
+    pd.DataFrame
+        Multi-indexed DataFrame with 'date' and 'ticker', columns are OHLCV in lowercase.
     """
     if end_date == None:
         end_date = dt.date.today().strftime('%Y-%m-%d')
@@ -40,7 +46,8 @@ def get_SP500(end_date=None, start_date=None, interval='1d'):
     df = yf.download(tickers=symbols_list,
                     start=start_date,
                     end=end_date,
-                    interval=interval).stack()
+                    interval=interval,
+                    auto_adjust=False).stack()
 
     df.index.names = ['date', 'ticker']
 
